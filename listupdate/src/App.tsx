@@ -1,5 +1,3 @@
-// App.tsx
-
 import React, { FC, ChangeEvent, useState } from "react";
 import "./App.css";
 import TodoTask from "./components/TodoTask";
@@ -7,16 +5,15 @@ import { ITask } from "./Interfaces";
 
 const App: FC = () => {
   const [task, setTask] = useState<string>("");
-  const [deadline, setDeadline] = useState<number>(0);
+  const [deadline, setDealine] = useState<number>(0);
   const [todoList, setTodoList] = useState<ITask[]>([]);
-  const [editTask, setEditTask] = useState<ITask | null>(null);
+  const [editingTask, setEditingTask] = useState<ITask | null>(null);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = event.target;
-    if (name === "task") {
-      setTask(value);
+    if (event.target.name === "task") {
+      setTask(event.target.value);
     } else {
-      setDeadline(Number(value));
+      setDealine(Number(event.target.value));
     }
   };
 
@@ -24,7 +21,7 @@ const App: FC = () => {
     const newTask = { taskName: task, deadline: deadline };
     setTodoList([...todoList, newTask]);
     setTask("");
-    setDeadline(0);
+    setDealine(0);
   };
 
   const completeTask = (taskNameToDelete: string): void => {
@@ -35,18 +32,17 @@ const App: FC = () => {
     );
   };
 
-  const editExistingTask = (editedTask: ITask): void => {
-    setEditTask(editedTask);
+  const editTask = (task: ITask): void => {
+    setEditingTask(task);
   };
 
-  const saveEditedTask = (editedTask: ITask): void => {
-    if (editedTask) {
-      const updatedList = todoList.map((task) =>
-        task.taskName === editedTask.taskName ? editedTask : task
+  const updateTask = (): void => {
+    if (editingTask) {
+      const updatedList = todoList.map((t) =>
+        t.taskName === editingTask.taskName ? editingTask : t
       );
-
       setTodoList(updatedList);
-      setEditTask(null);
+      setEditingTask(null);
     }
   };
 
@@ -72,22 +68,42 @@ const App: FC = () => {
         <button onClick={addTask}>Add Task</button>
       </div>
       <div className="todoList">
-        {todoList.map((task: ITask, key: number) => {
-          return (
-            <TodoTask
-              key={key}
-              task={task}
-              completeTask={completeTask}
-              editTask={editExistingTask}
-            />
-          );
-        })}
-      </div>
-      {editTask && (
-        <div className="editContainer">
-          <button onClick={() => saveEditedTask(editTask)}>
-            Save Edited Task
-          </button>
+  {todoList.map((task: ITask, key: number) => {
+    return (
+      <TodoTask
+        key={key}
+        task={task}
+        completeTask={completeTask}
+        editTask={editTask}  
+      />
+    );
+  })}
+</div>
+
+      {/* Edit Form */}
+      {editingTask && (
+        <div className="edit-form">
+          <input
+            type="text"
+            value={editingTask.taskName}
+            onChange={(e) =>
+              setEditingTask({
+                ...editingTask,
+                taskName: e.target.value,
+              })
+            }
+          />
+          <input
+            type="number"
+            value={editingTask.deadline}
+            onChange={(e) =>
+              setEditingTask({
+                ...editingTask,
+                deadline: Number(e.target.value),
+              })
+            }
+          />
+          <button onClick={updateTask}>Save</button>
         </div>
       )}
     </div>
@@ -95,6 +111,5 @@ const App: FC = () => {
 };
 
 export default App;
-
 
 

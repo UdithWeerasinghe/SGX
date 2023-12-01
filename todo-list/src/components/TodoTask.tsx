@@ -1,3 +1,4 @@
+
 // TodoTask.tsx
 
 import React, { useState, ChangeEvent } from "react";
@@ -15,7 +16,7 @@ const TodoTask = ({ task, completeTask, editTask }: Props) => {
 
   const handleEditClick = () => {
     setEditing(true);
-    editTask(task);
+    editTask(editedTask); // Pass the edited task to the parent component
   };
 
   const handleSaveClick = () => {
@@ -64,5 +65,6 @@ const TodoTask = ({ task, completeTask, editTask }: Props) => {
 };
 
 export default TodoTask;
+
 
 
